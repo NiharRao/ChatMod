@@ -1,0 +1,8 @@
+{
+“name”: “ChatMod”,
+“version”: “1.0.0”,
+“description”: “Discord bot to moderate chat”,
+“main”: “bot.js”,
+“author”: “Nihar Rao”,
+“dependencies”: {}
+}
