@@ -74,4 +74,4 @@ client.on('message', message => {
 });
 
 
-client.login('NTg3MzUzNzI5NjE5OTg0NDE1.XP1XKg.-utF1aeBqUnI-j97hkTZJx8TYGs');
+client.login(process.env.'NTg3MzUzNzI5NjE5OTg0NDE1.XP1XKg.-utF1aeBqUnI-j97hkTZJx8TYGs');
