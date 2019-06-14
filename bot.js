@@ -14,7 +14,7 @@ client.on('message', message => {
   var args = command.slice(1);
 
   if(message.content.match(/test/i)){
-    message.reply('found "test"');
+    message.reply('found!');
     message.delete();
     return;
   }
