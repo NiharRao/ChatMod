@@ -13,6 +13,12 @@ client.on('message', message => {
   var command = message.content.slice(prefix.length).split(" ");
   var args = command.slice(1);
 
+  if(message.content.match(/test/i)){
+    message.reply('found "test"');
+    message.delete();
+    return;
+  }
+
   if (msg.startsWith(prefix+"purge")) {
     async function purge(){
       //check to mnake sure EnderRao is the one purging
