@@ -22,7 +22,8 @@ client.on('message', message => {
   if (msg.startsWith(prefix+"purge")) {
     async function purge(){
       //check to mnake sure EnderRao is the one purging
-      if(sender.username != "EnderRao"){
+      if(message.member.hasPermission("ADMINISTRATOR")){
+        message.reply('t1');
         return;
       }
 
