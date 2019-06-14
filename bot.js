@@ -22,8 +22,8 @@ client.on('message', message => {
   if (msg.startsWith(prefix+"purge")) {
     async function purge(){
       //check to mnake sure EnderRao is the one purging
-      if(message.member.hasPermission("ADMINISTRATOR")){
-        message.reply('t1');
+      if(!(message.member.hasPermission("ADMINISTRATOR"))){
+        message.reply('Insufficient permissions');
         return;
       }
 
