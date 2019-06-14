@@ -15,7 +15,7 @@ client.on('message', message => {
 
   if(message.content.match(/test/i)){
     message.reply('found!');
-    message.delete();
+    //message.delete();
     return;
   }
 
