@@ -3,7 +3,8 @@ const client = new Discord.Client();
 var fs = require('fs');
 var filterList = [];
 var filter = false;
-
+var cmChannel = false;
+var cmID;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -11,6 +12,31 @@ client.on('ready', () => {
   filterList = JSON.parse(fileContents);
   var fileContents2 = fs.readFileSync('./filterSwitch.txt', 'utf8');
   filter = JSON.parse(fileContents2);
+  // if(client.channels.exists('test-bot-channel',ticketname)){
+  //   console.log("t");
+  // }
+  var val;
+  val = client.channels.find(channel => channel.name === 'chatmod-channel');
+  if(val){
+    cmID = val.id;
+    console.log('Channel found');
+    client.channels.get(val.id).send('t');
+
+    // val = client.channels.find(channel => channel.name === 'general');
+    // // console.log(val.id);
+    // client.channels.get(val.id).send('cm.channel.creation');
+
+    cmChannel = true;
+  }
+  else{ 
+    console.log('Channel not found...creating channel now');
+    val = client.channels.find(channel => channel.name === 'general');
+    // console.log(val.id);
+    client.channels.get(val.id).send('cm.channel.creation');
+    cmChannel = false;
+    //console.log(client.guilds.find("channels"));
+    // client.channelCreate('ChatMod-channel','text');
+  }
   //console.log(filterList);
 });
 
@@ -123,6 +149,55 @@ client.on('message', message => {
 
   else{
     if(message.member.roles.find(r => r.name === "ChatMod")){
+      if(message.channel.name === 'general'){
+        if(message.content === 'cm.channel.creation'){
+          message.delete(1000);//here
+          var roleAll = message.guild.roles.find(r => r.name === "@everyone");
+          var roleCM = message.guild.roles.find(r => r.name === "ChatMod");
+          var val;
+          // console.log(roleAll);
+          // console.log(roleCM);
+          message.guild.createChannel('chatmod-channel', 'text' ,[
+            {
+              type: 'role',
+              id: roleAll.id,
+              deny:1024
+            },
+            {
+              type: 'role',
+              id: roleCM.id,
+              allow:9216
+            }
+          ])
+          
+          
+          .then(()=> val =  client.channels.find(channel => channel.name === 'chatmod-channel'))
+          .then(()=> client.channels.get(val.id).send(listString(message)))
+          ;
+
+
+          
+          // 
+          // //val is null
+          // console.log(val);
+          // client.channels.get(val.id).send('some message');
+
+          
+
+
+
+
+
+          // console.log('t');
+          // console.log('t');
+          // sendDefault(message);
+          
+          //client.channels.get(val.id).send('Filter list (disabled):\n'+words);
+          
+          cmChannel = true;
+          //console.log(message.channel);
+        }
+      }
       return;
     }
     if(filter){
@@ -140,6 +215,10 @@ client.on('message', message => {
   }
 
 });
+
+function sendDefault(message){
+  
+}
 
 function addToFilter(word, message){
   for(var i = 0; i < filterList.length;i++){
@@ -189,4 +268,27 @@ function showList(message){
   }
 }
 
-client.login(process.env.BOT_TOKEN);
+function listString(message){
+  var words = "[";
+  for(var i = 0; i < filterList.length; i++){
+    if(i == filterList.length-1){
+      words = words + filterList[i]+']';
+    }
+    else{
+      words = words + filterList[i]+", ";
+    }
+  }
+  if(filterList.length == 0){
+    words = "[]";
+  }
+  if(filter){
+    words = 'Filter list (enabled):\n'+words;
+  }
+  else{
+    words = 'Filter list (disabled):\n'+words;
+  }
+  return words;
+}
+
+// client.login(process.env.BOT_TOKEN);
+client.login("NTg3MzUzNzI5NjE5OTg0NDE1.XP1XKg.-utF1aeBqUnI-j97hkTZJx8TYGs");
