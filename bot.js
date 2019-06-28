@@ -8,23 +8,14 @@ var cmID;
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  var fileContents = fs.readFileSync('./words.txt', 'utf8');
-  filterList = JSON.parse(fileContents);
-  var fileContents2 = fs.readFileSync('./filterSwitch.txt', 'utf8');
-  filter = JSON.parse(fileContents2);
-  // if(client.channels.exists('test-bot-channel',ticketname)){
-  //   console.log("t");
-  // }
+  
   var val;
   val = client.channels.find(channel => channel.name === 'chatmod-channel');
   if(val){
     cmID = val.id;
     console.log('Channel found');
-    client.channels.get(val.id).send('t');
-
-    // val = client.channels.find(channel => channel.name === 'general');
-    // // console.log(val.id);
-    // client.channels.get(val.id).send('cm.channel.creation');
+    fillFilter(val);
+   
 
     cmChannel = true;
   }
@@ -34,10 +25,7 @@ client.on('ready', () => {
     // console.log(val.id);
     client.channels.get(val.id).send('cm.channel.creation');
     cmChannel = false;
-    //console.log(client.guilds.find("channels"));
-    // client.channelCreate('ChatMod-channel','text');
   }
-  //console.log(filterList);
 });
 
 client.on('message', message => {
@@ -70,14 +58,14 @@ client.on('message', message => {
     else if(args[0].toLowerCase() === 'enable'){
       filter = true;
       message.reply("Message filter enabled");
-      var file = fs.createWriteStream('filterSwitch.txt');
-      file.write(JSON.stringify(filter));
+      var val =  client.channels.find(channel => channel.name === 'chatmod-channel');
+      client.channels.get(val.id).send(listString(message));
     }
     else if(args[0].toLowerCase() === 'disable'){
       filter = false;
       message.reply("Message filter disabled");
-      var file = fs.createWriteStream('filterSwitch.txt');
-      file.write(JSON.stringify(filter));
+      var val =  client.channels.find(channel => channel.name === 'chatmod-channel');
+      client.channels.get(val.id).send(listString(message));
     }
     else{
       message.channel.send('Usage:\n'+ prefix + 'filter show\n' + prefix + 'filter enable\n' + prefix + 'filter disable\n' + prefix + 'filter add <word>\n' + prefix + 'filter remove <word>');
@@ -99,9 +87,6 @@ client.on('message', message => {
         return;
       }
 
-      //console.log(args[1].substring(2,args[1].length-1));
-      //console.log(message.author.id);
-      //message.channel.send("test "+args[1]);
       var del = parseInt(args[0])+1;
       if (del > 100){
         del = 100;
@@ -155,8 +140,6 @@ client.on('message', message => {
           var roleAll = message.guild.roles.find(r => r.name === "@everyone");
           var roleCM = message.guild.roles.find(r => r.name === "ChatMod");
           var val;
-          // console.log(roleAll);
-          // console.log(roleCM);
           message.guild.createChannel('chatmod-channel', 'text' ,[
             {
               type: 'role',
@@ -176,26 +159,7 @@ client.on('message', message => {
           ;
 
 
-          
-          // 
-          // //val is null
-          // console.log(val);
-          // client.channels.get(val.id).send('some message');
-
-          
-
-
-
-
-
-          // console.log('t');
-          // console.log('t');
-          // sendDefault(message);
-          
-          //client.channels.get(val.id).send('Filter list (disabled):\n'+words);
-          
           cmChannel = true;
-          //console.log(message.channel);
         }
       }
       return;
@@ -230,8 +194,8 @@ function addToFilter(word, message){
   console.log('Added '+word+' to filter list.');
   message.channel.send('Added new word to filter list');
 
-  var file = fs.createWriteStream('words.txt');
-  file.write(JSON.stringify(filterList));
+  var val =  client.channels.find(channel => channel.name === 'chatmod-channel');
+  client.channels.get(val.id).send(listString(message));
 }
 
 function removeFromFilter(word, message){
@@ -243,8 +207,8 @@ function removeFromFilter(word, message){
       i--;
     }
   }
-  var file = fs.createWriteStream('words.txt');
-  file.write(JSON.stringify(filterList));
+  var val =  client.channels.find(channel => channel.name === 'chatmod-channel');
+  client.channels.get(val.id).send(listString(message));
 }
 
 function showList(message){
@@ -288,6 +252,24 @@ function listString(message){
     words = 'Filter list (disabled):\n'+words;
   }
   return words;
+}
+
+function fillFilter(channel){
+  var val = channel;
+  val.fetchMessages({ limit: 1 }).then(messages => {
+    let lastMessage = messages.first();
+    var contents = lastMessage.content.split(" ");
+    var contents2 = contents[2].split(":\n");
+    if(contents2[0] === "(disabled)"){
+      filter = false;
+    }
+    else{
+      filter = true;
+    }
+    filterList = JSON.parse(contents2[1]);
+  
+  })
+  .catch(console.error);
 }
 
 // client.login(process.env.BOT_TOKEN);
