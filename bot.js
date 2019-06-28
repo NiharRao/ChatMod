@@ -272,5 +272,5 @@ function fillFilter(channel){
   .catch(console.error);
 }
 
-// client.login(process.env.BOT_TOKEN);
-client.login("NTg3MzUzNzI5NjE5OTg0NDE1.XP1XKg.-utF1aeBqUnI-j97hkTZJx8TYGs");
+client.login(process.env.BOT_TOKEN);
+// client.login("");
