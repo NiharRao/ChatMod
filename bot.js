@@ -157,6 +157,15 @@ client.on('message', message => {
 
 });
 
+
+client.on('channelDelete', channel => {
+  if(channel.id === cmID){
+    val = client.channels.find(channel => channel.name === 'general');
+    client.channels.get(val.id).send('cm.channel.creation');
+  }
+});
+
+
 function cmChannelCreation(message){
   message.delete(1000);
   var roleAll = message.guild.roles.find(r => r.name === "@everyone");
@@ -182,6 +191,7 @@ function cmChannelCreation(message){
   .then(()=> client.channels.get(val.id).send(listString(message)))
   ;
 
+  cmID = val.id;
   cmChannel = true;
 }
 
