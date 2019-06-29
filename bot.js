@@ -162,7 +162,9 @@ function cmChannelCreation(message){
   var roleAll = message.guild.roles.find(r => r.name === "@everyone");
   var roleCM = message.guild.roles.find(r => r.name === "ChatMod");
   var val;
-  message.guild.createChannel('chatmod-channel', 'text' ,[
+  message.guild.createChannel('chatmod-channel',{
+    type: 'text' ,
+    permissionOverwrites:[
     {
       type: 'role',
       id: roleAll.id,
@@ -173,7 +175,8 @@ function cmChannelCreation(message){
       id: roleCM.id,
       allow:11264
     }
-  ])
+    ]
+  })
            
   .then(()=> val =  client.channels.find(channel => channel.name === 'chatmod-channel'))
   .then(()=> client.channels.get(val.id).send(listString(message)))
