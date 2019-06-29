@@ -189,9 +189,9 @@ function cmChannelCreation(message){
            
   .then(()=> val =  client.channels.find(channel => channel.name === 'chatmod-channel'))
   .then(()=> client.channels.get(val.id).send(listString(message)))
+  .then(()=> cmID = val.id)
   ;
 
-  cmID = val.id;
   cmChannel = true;
 }
 
