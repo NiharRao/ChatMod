@@ -19,12 +19,12 @@ client.on('ready', () => {
 
     cmChannel = true;
   }
-  else{ 
+  else{
+    cmChannel = false; 
     console.log('Channel not found...creating channel now');
     val = client.channels.find(channel => channel.name === 'general');
     // console.log(val.id);
     client.channels.get(val.id).send('cm.channel.creation');
-    cmChannel = false;
   }
 });
 
@@ -136,30 +136,7 @@ client.on('message', message => {
     if(message.member.roles.find(r => r.name === "ChatMod")){
       if(message.channel.name === 'general'){
         if(message.content === 'cm.channel.creation'){
-          message.delete(1000);//here
-          var roleAll = message.guild.roles.find(r => r.name === "@everyone");
-          var roleCM = message.guild.roles.find(r => r.name === "ChatMod");
-          var val;
-          message.guild.createChannel('chatmod-channel', 'text' ,[
-            {
-              type: 'role',
-              id: roleAll.id,
-              deny:1024
-            },
-            {
-              type: 'role',
-              id: roleCM.id,
-              allow:9216
-            }
-          ])
-          
-          
-          .then(()=> val =  client.channels.find(channel => channel.name === 'chatmod-channel'))
-          .then(()=> client.channels.get(val.id).send(listString(message)))
-          ;
-
-
-          cmChannel = true;
+          cmChannelCreation(message);
         }
       }
       return;
@@ -180,8 +157,29 @@ client.on('message', message => {
 
 });
 
-function sendDefault(message){
-  
+function cmChannelCreation(message){
+  message.delete(1000);
+  var roleAll = message.guild.roles.find(r => r.name === "@everyone");
+  var roleCM = message.guild.roles.find(r => r.name === "ChatMod");
+  var val;
+  message.guild.createChannel('chatmod-channel', 'text' ,[
+    {
+      type: 'role',
+      id: roleAll.id,
+      deny:3072
+    },
+    {
+      type: 'role',
+      id: roleCM.id,
+      allow:11264
+    }
+  ])
+           
+  .then(()=> val =  client.channels.find(channel => channel.name === 'chatmod-channel'))
+  .then(()=> client.channels.get(val.id).send(listString(message)))
+  ;
+
+  cmChannel = true;
 }
 
 function addToFilter(word, message){
